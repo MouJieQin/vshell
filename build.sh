@@ -1,7 +1,7 @@
 #/bin/bash
-
+OBJ=vshell
 CC=clang++
-if ! clang -v > /dev/null 2>&1;then
+if ! clang -v >/dev/null 2>&1;then
     CC=g++
 fi
 PATH_PREFIX=$(pwd)
@@ -33,8 +33,8 @@ function build_all()
         build_or_not $cppfile
         ofile="$ofile$cppfile.o "
     done
-    echo "$CC -std=c++11 -o vshell $ofile"
-    $CC -std=c++11 -o vshell $ofile
+    echo "$CC -std=c++11 -o $OBJ $ofile"
+    $CC -std=c++11 -o $OBJ $ofile
     echo "done"
     set +e
 }
@@ -47,9 +47,9 @@ function clean()
         echo "rm -f $cppfile"
         rm -f $cppfile
     done
-    if [[ -f vshell ]];then
-        echo "rm vshell"
-        rm vshell
+    if [[ -f $OBJ ]];then
+        echo "rm $OBJ"
+        rm $OBJ
     fi
     echo "done"
     set +e
@@ -58,28 +58,28 @@ function clean()
 function uninstall()
 {
     set -e
-    rm /usr/local/bin/vshell > /dev/null 2>&1 || true
-    echo "vshell unstall done"
+    rm /usr/local/bin/$OBJ > /dev/null 2>&1 || true
+    echo "$OBJ unstall done"
     set +e
 }
 
 function install()
 {
     set -e
-    if [[ ! -f $PATH_PREFIX/vshell ]];then
+    if [[ ! -f $PATH_PREFIX/$OBJ ]];then
         build_all
     fi
     uninstall > /dev/null 2>&1
     mkdir -p /usr/local/bin
-    ln -s $PATH_PREFIX/vshell /usr/local/bin/vshell
-    echo "vshell install done"
+    ln -s $PATH_PREFIX/$OBJ /usr/local/bin/$OBJ
+    echo "$OBJ install done"
     set +e
 }
 
 function reinstall()
 {
     set -e
-    rm $PATH_PREFIX/vshell > /dev/null 2>&1 || true
+    rm $PATH_PREFIX/$OBJ > /dev/null 2>&1 || true
     install;
 }
 
